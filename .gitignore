@@ -1,0 +1,68 @@
+# Ignore Python cache and environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+ENV/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore sensitive files
+*.env
+*.key
+*.pem
+*.crt
+
+# Ignore node modules (if any JS)
+node_modules/
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.swp
+
+# Ignore build/output folders
+build/
+dist/
+
+# Ignore temp files
+*.tmp
+*.bak
+~$*
+
+# Ignore coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# Ignore test output
+junit.xml
+
+# Ignore Docker files
+*.pid
+*.pid.lock
+
+# Ignore backup files
+*.old
+*.orig
+
+# Ignore private data
+secrets.json
+
+# Ignore web scraper output
+output/
+data/
+
+# Ignore CNAME if not custom domain
+# CNAME
+
+# Do not track Python files in root, but allow in Scripts/
+/*.py
+!Scripts/*.py
