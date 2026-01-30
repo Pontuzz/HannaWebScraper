@@ -28,6 +28,8 @@ def scrape_and_send_to_n8n(urls, webhook_url, ca_cert_path=None, excluded_domain
         excluded_domains_path (str): Path to exclusions list (JSON).
     """
     excluded_domains = load_excluded_domains_json(excluded_domains_path) if excluded_domains_path else set()
+    tags = input("Enter tags for this batch (comma-separated, optional): ").strip()
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()] if tags else []
     for url in urls:
         domain = urlparse(url).netloc.lower()
         if any(domain == ex or domain.endswith('.' + ex) for ex in excluded_domains):
@@ -40,7 +42,7 @@ def scrape_and_send_to_n8n(urls, webhook_url, ca_cert_path=None, excluded_domain
             soup = BeautifulSoup(response.text, "html.parser")
             text = soup.get_text(separator=" ", strip=True)
             print(f"Scraped text (first 500 chars):\n{text[:500]}\n---")
-            payload = {"fact": text}
+            payload = {"fact": text, "url": url, "tags": tag_list}
             verify = ca_cert_path if ca_cert_path else True
             print(f"Sending payload to n8n webhook: {webhook_url}")
             r = requests.post(webhook_url, json=payload, timeout=10, verify=verify)

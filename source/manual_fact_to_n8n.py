@@ -34,7 +34,9 @@ def manual_fact_entry_and_send(webhook_url, ca_cert_path=None, excluded_domains_
         if text.lower() == 'quit':
             print("Exiting.")
             break
-        payload = {"fact": text}
+        tags = input("Tags for this fact (comma-separated, optional): ").strip()
+        tag_list = [t.strip() for t in tags.split(",") if t.strip()] if tags else []
+        payload = {"fact": text, "tags": tag_list}
         if url:
             payload["url"] = url
         try:
