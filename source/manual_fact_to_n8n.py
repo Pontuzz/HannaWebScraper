@@ -1,4 +1,5 @@
 import requests
+import uuid
 import os
 import json
 
@@ -30,15 +31,34 @@ def manual_fact_entry_and_send(webhook_url, ca_cert_path=None, excluded_domains_
             if any(domain == ex or domain.endswith('.' + ex) for ex in excluded_domains):
                 print(f"Skipping excluded domain: {domain}")
                 continue
+        title = input("Title (optional): ").strip()
         text = input("Fact text (or 'quit' to exit): ").strip()
         if text.lower() == 'quit':
             print("Exiting.")
             break
         tags = input("Tags for this fact (comma-separated, optional): ").strip()
         tag_list = [t.strip() for t in tags.split(",") if t.strip()] if tags else []
-        payload = {"fact": text, "tags": tag_list}
-        if url:
-            payload["url"] = url
+        source_type = input("Source type (default: manual): ").strip() or "manual"
+        confidence = input("Confidence (0-1, default: 1.0): ").strip()
+        try:
+            confidence = float(confidence) if confidence else 1.0
+        except Exception:
+            confidence = 1.0
+        related_entities = input("Related entities (comma-separated, optional): ").strip()
+        related_list = [t.strip() for t in related_entities.split(",") if t.strip()] if related_entities else []
+        fact_id = str(uuid.uuid4())
+        payload = {
+            "id": fact_id,
+            "url": url if url else None,
+            "title": title if title else None,
+            "fact": text,
+            "tags": tag_list,
+            "source_type": source_type,
+            "confidence": confidence,
+            "related_entities": related_list
+        }
+        # Remove None fields
+        payload = {k: v for k, v in payload.items() if v is not None}
         try:
             verify = ca_cert_path if ca_cert_path else True
             print(f"Sending payload to n8n webhook: {webhook_url}")
