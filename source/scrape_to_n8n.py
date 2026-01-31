@@ -35,6 +35,8 @@ def scrape_and_send_to_n8n(urls, webhook_url, ca_cert_path=None, excluded_domain
     confidence = 0.8
     related_entities = input("Related entities for this batch (comma-separated, optional): ").strip()
     related_list = [t.strip() for t in related_entities.split(",") if t.strip()] if related_entities else []
+    user_agent = "HannaWebScraper/1.0 (+https://botinfo.hivenet.dev/)"
+    headers = {"User-Agent": user_agent}
     for url in urls:
         domain = urlparse(url).netloc.lower()
         if any(domain == ex or domain.endswith('.' + ex) for ex in excluded_domains):
@@ -42,7 +44,7 @@ def scrape_and_send_to_n8n(urls, webhook_url, ca_cert_path=None, excluded_domain
             continue
         try:
             print(f"Scraping: {url}")
-            response = requests.get(url, timeout=10)
+            response = requests.get(url, timeout=10, headers=headers)
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
             text = soup.get_text(separator=" ", strip=True)
